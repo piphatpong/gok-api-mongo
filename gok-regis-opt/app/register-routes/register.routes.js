@@ -1,11 +1,12 @@
 module.exports = app => {
+
   const registers = require("../register-controllers/register.controller.js");
 
   var router = require("express").Router();
 
-  var router2 = require("express").Router();
+  var authen = require("express").Router();
 
-  var router3 = require("express").Router();
+  var userinfo = require("express").Router();
 
   var chat = require("express").Router();
 
@@ -38,35 +39,38 @@ module.exports = app => {
 
   app.use("/api/registers", router);
 
-  //----------------------------------------//
 
-  app.use("/api/authens", router2);
+  //------------------ Authen ----------------------//
+
+  app.use("/api/authens", authen);
 
   // Find user by authenID when login
-  router2.get("/", registers.findAllAuthen);
+  authen.get("/", registers.findAllAuthen);
 
-  //----------------------------------------//
 
-  app.use("/api/userinfos", router3);
+  //----------------- User Information -----------------------//
 
-  // Find user by id
-  router3.get("/", registers.findUserInfo);
-
-  // Update user info by id
-  router3.patch("/:id", registers.patchUserProfile);
-
-  //----------------------------------------//
-
-  //app.use("/api/chats", chat);
+  app.use("/api/userinfos", userinfo);
 
   // Find user by id
-  //chat.get("/", registers.findAll);
+  userinfo.get("/", registers.findUserInfo);
 
   // Update user info by id
-  //chat.get("/:id", registers.findOne);
+  userinfo.patch("/:id", registers.patchUserProfile);
+
+
+  //------------------ chat section ----------------------//
+
+  app.use("/api/chats", chat);
+
+  // Find user by id
+  chat.get("/", registers.chatfindAll);
+
+  // Update user info by id
+  chat.get("/:id", registers.chatfindOne);
 
   // Create a new Tutorial
-  //chat.post("/", registers.create);
+  chat.post("/", registers.chatcreate);
 
 
 };

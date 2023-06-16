@@ -1,10 +1,14 @@
 const db = require("../register-models/register-model");
 const Register = db.registers;
 
+const chatDB = require("../register-models/chat-model");
+const Chater = chatDB.chats;
+
+
 // Create and Save a new Register
 exports.create = (req, res) => {
   // Validate request
-  if (!req.body.authenID) {
+  if (!req.body) {
     res.status(400).send({ message: "Content can not be empty!" });
     return;
   }
@@ -24,6 +28,7 @@ exports.create = (req, res) => {
   });
 
   // Save Register in the database
+  
   register
     .save(register)
     .then(data => {
@@ -35,7 +40,9 @@ exports.create = (req, res) => {
           err.message || "Some error occurred while creating the Register."
       });
     });
+  
 };
+
 
 // Retrieve all Registers from the database.
 exports.findAll = (req, res) => {
@@ -255,5 +262,76 @@ exports.patchUserProfile = (req, res) => {
       res.status(500).send({
         message: "Patch User Info Error updating Register with id=" + id
       });
+    });
+};
+
+/*--------------------------- Chat --------------------------------*/
+
+exports.chatcreate = (req, res) => {
+  // Validate request
+  if (!req.body) {
+    res.status(400).send({ message: "Content can not be empty!" });
+    return;
+  }
+
+  // Create a Register
+  const chatitem = new Chater({
+    idOwner: req.body.idOwner,
+    idFriend: req.body.idFriend,
+    ownerMsg: req.body.ownerMsg,
+    timestampsOwnerMsg: req.body.timestampsOwnerMsg,
+    friendMsg: req.body.friendMsg,
+    timestampsFriendMsg: req.body.timestampsFriendMsg,
+    lastMsg: req.body.lastMsg,
+    lastMsgTime: req.body.lastMsgTime,
+    published: req.body.published ? req.body.published : false
+  });
+
+  // Save Register in the database
+  
+  chatitem
+    .save(chatitem)
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while creating the Register."
+      });
+    });
+};
+
+// Retrieve all Registers from the database.
+exports.chatfindAll = (req, res) => {
+  const email = req.query.email;
+  var condition = email ? { email: { $regex: new RegExp(email), $options: "i" } } : {};
+
+  Chater.find(condition)
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving registers."
+      });
+    });
+};
+
+// Find a single Register with an id
+exports.chatfindOne = (req, res) => {
+  const id = req.params.id;
+
+  Chater.findById(id)
+    .then(data => {
+      if (!data)
+        res.status(404).send({ message: "Not found Register with id " + id });
+      else res.send(data);
+    })
+    .catch(err => {
+      res
+        .status(500)
+        .send({ message: "findById / Error retrieving Register with id=" + id });
     });
 };
