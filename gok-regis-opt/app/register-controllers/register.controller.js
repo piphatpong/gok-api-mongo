@@ -302,28 +302,13 @@ exports.chatcreate = (req, res) => {
     });
 };
 
-// Retrieve all Registers from the database.
-exports.chatfindAll = (req, res) => {
-  const email = req.query.email;
-  var condition = email ? { email: { $regex: new RegExp(email), $options: "i" } } : {};
-
-  Chater.find(condition)
-    .then(data => {
-      res.send(data);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving registers."
-      });
-    });
-};
 
 // Find a single Register with an id
 exports.chatfindOne = (req, res) => {
-  const id = req.params.id;
+  const idOwnerInput = req.query.idOwner;
+  //res.send({message: idOwnerInput})
 
-  Chater.findById(id)
+  Chater.find({idOwner: idOwnerInput})
     .then(data => {
       if (!data)
         res.status(404).send({ message: "Not found Register with id " + id });
@@ -334,4 +319,5 @@ exports.chatfindOne = (req, res) => {
         .status(500)
         .send({ message: "findById / Error retrieving Register with id=" + id });
     });
+  
 };

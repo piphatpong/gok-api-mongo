@@ -63,11 +63,8 @@ module.exports = app => {
 
   app.use("/api/chats", chat);
 
-  // Find user by id
-  chat.get("/", registers.chatfindAll);
-
   // Update user info by id
-  chat.get("/:id", registers.chatfindOne);
+  chat.get("/", registers.chatfindOne);
 
   // Create a new Tutorial
   chat.post("/", registers.chatcreate);
